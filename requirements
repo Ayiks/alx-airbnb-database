@@ -1,0 +1,137 @@
+# Entity Relationship Diagram (ERD)
+
+This document outlines the entities and relationships for the **Airbnb-like Database System**.  
+The diagram below illustrates how users, properties, bookings, payments, reviews, and messages interact.
+
+## Entities and Attributes
+
+### User
+- user_id (PK, UUID, Indexed)
+- first_name (VARCHAR, NOT NULL)
+- last_name (VARCHAR, NOT NULL)
+- email (VARCHAR, UNIQUE, NOT NULL)
+- password_hash (VARCHAR, NOT NULL)
+- phone_number (VARCHAR, NULL)
+- role (ENUM: guest, host, admin)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+### Property
+- property_id (PK, UUID, Indexed)
+- host_id (FK → User.user_id)
+- name (VARCHAR, NOT NULL)
+- description (TEXT, NOT NULL)
+- location (VARCHAR, NOT NULL)
+- price_per_night (DECIMAL, NOT NULL)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- updated_at (TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)
+
+### Booking
+- booking_id (PK, UUID, Indexed)
+- property_id (FK → Property.property_id)
+- user_id (FK → User.user_id)
+- start_date (DATE, NOT NULL)
+- end_date (DATE, NOT NULL)
+- total_price (DECIMAL, NOT NULL)
+- status (ENUM: pending, confirmed, canceled)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+### Payment
+- payment_id (PK, UUID, Indexed)
+- booking_id (FK → Booking.booking_id)
+- amount (DECIMAL, NOT NULL)
+- payment_date (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- payment_method (ENUM: credit_card, paypal, stripe)
+
+### Review
+- review_id (PK, UUID, Indexed)
+- property_id (FK → Property.property_id)
+- user_id (FK → User.user_id)
+- rating (INTEGER, 1–5)
+- comment (TEXT, NOT NULL)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+### Message
+- message_id (PK, UUID, Indexed)
+- sender_id (FK → User.user_id)
+- recipient_id (FK → User.user_id)
+- message_body (TEXT, NOT NULL)
+- sent_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+---
+
+## ER Diagram (PlantUML)
+
+```plantuml
+@startuml
+entity "User" as user {
+  *user_id : UUID
+  --
+  first_name : VARCHAR
+  last_name : VARCHAR
+  email : VARCHAR (UNIQUE)
+  password_hash : VARCHAR
+  phone_number : VARCHAR
+  role : ENUM(guest, host, admin)
+  created_at : TIMESTAMP
+}
+
+entity "Property" as property {
+  *property_id : UUID
+  --
+  host_id : UUID (FK)
+  name : VARCHAR
+  description : TEXT
+  location : VARCHAR
+  price_per_night : DECIMAL
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+entity "Booking" as booking {
+  *booking_id : UUID
+  --
+  property_id : UUID (FK)
+  user_id : UUID (FK)
+  start_date : DATE
+  end_date : DATE
+  total_price : DECIMAL
+  status : ENUM(pending, confirmed, canceled)
+  created_at : TIMESTAMP
+}
+
+entity "Payment" as payment {
+  *payment_id : UUID
+  --
+  booking_id : UUID (FK)
+  amount : DECIMAL
+  payment_date : TIMESTAMP
+  payment_method : ENUM(credit_card, paypal, stripe)
+}
+
+entity "Review" as review {
+  *review_id : UUID
+  --
+  property_id : UUID (FK)
+  user_id : UUID (FK)
+  rating : INTEGER
+  comment : TEXT
+  created_at : TIMESTAMP
+}
+
+entity "Message" as message {
+  *message_id : UUID
+  --
+  sender_id : UUID (FK)
+  recipient_id : UUID (FK)
+  message_body : TEXT
+  sent_at : TIMESTAMP
+}
+
+user ||--o{ property : "hosts"
+user ||--o{ booking : "makes"
+user ||--o{ review : "writes"
+user ||--o{ message : "sends/receives"
+property ||--o{ booking : "is booked"
+property ||--o{ review : "has"
+booking ||--|| payment : "has payment"
+@enduml
