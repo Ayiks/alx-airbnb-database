@@ -19,3 +19,20 @@ Includes:
 Contains:
 - `COUNT + GROUP BY` to count bookings per user  
 - `RANK() OVER()` to rank properties by booking volume  
+
+### Index Performance Improvement
+
+Tested queries using `EXPLAIN ANALYZE`.
+
+Key improvements:
+
+- Lookup by user email became instant after `idx_users_email`
+- Joins between bookings → users/properties improved significantly
+- Property search by price/location became faster
+
+Indexes created:
+- `bookings.user_id`, `bookings.property_id`
+- `properties.location`, `properties.price`
+- `users.email`
+
+Result: reduced query cost & execution time.
