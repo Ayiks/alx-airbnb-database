@@ -7,6 +7,13 @@ This module demonstrates understanding of `INNER`, `LEFT`, and `FULL OUTER JOIN`
 - Retrieve all users and bookings, regardless of matches
 
 
+### Subqueries Exercise
+
+Includes:
+- Non-correlated subquery: properties with average rating > 4.0
+- Correlated subquery: users with more than 3 bookings
+
+
 ### Aggregations & Window Functions
 
 Contains:
