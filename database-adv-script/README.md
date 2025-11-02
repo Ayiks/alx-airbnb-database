@@ -36,3 +36,21 @@ Indexes created:
 - `users.email`
 
 Result: reduced query cost & execution time.
+
+
+### Query Optimization Report
+
+Original query joined 4 tables.  
+We analyzed using `EXPLAIN ANALYZE`.
+
+Issues:
+- Full table scans on bookings & payments
+- No index on payment.booking_id
+
+Fixes:
+- Added relevant indexes
+- Verified `JOIN` fields indexed
+
+Result:
+- Significant drop in execution time  
+- Index usage confirmed via query plan
